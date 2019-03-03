@@ -2,8 +2,8 @@ import socket
 from _thread import *
 import sys
 
-server = "192.168.0.24"
-port = 5555
+server = "192.168.0.15"
+port = 6666
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -17,6 +17,7 @@ print("Waiting for connection... Server started")
 
 
 def threaded_client(conn):
+    conn.send(str.encode("Connected"))
     reply = ""
     while True:
         try:
@@ -34,10 +35,12 @@ def threaded_client(conn):
         except conn.error as e:
             print("Error: ", e)
             break
+    print("Connection was lost")
+    conn.close()
 
 
 while True:
     conn, addr = s.accept()
     print("Connection made to {}".format(addr))
 
-    start_new_thread(threaded_client, conn)
+    start_new_thread(threaded_client, (conn, ))
