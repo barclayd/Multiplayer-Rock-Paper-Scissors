@@ -1,14 +1,12 @@
 import pygame
 from network import Network
-from player import Player
-# set up
 
+# set up
 WIDTH = 500
 HEIGHT = 500
 
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Client")
-pygame.init()
 
 
 # functions
@@ -22,26 +20,18 @@ def re_draw_window(win, player, player2):
 def main():
     run = True
     n = Network()
-    start_pos = read_position(n.get_pos())
-    player = Player(start_pos[0], start_pos[1], 100, 100, (255, 255, 0))
-    player2 = Player(0, 0, 100, 100, (255, 0, 0))
+    p = n.get_p()
     clock = pygame.time.Clock()
 
     while run:
         clock.tick(60)
-        # send player 1 coordinates to server
-        player2_position = read_position(n.send(make_position((player.x, player.y))))
-        # server sends back player 2 coordinates
-        # draw player2 with new coordinates
-        player2.x = player2_position[0]
-        player2.y = player2_position[1]
-        player2.update()
+        p2 = n.send(p)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-        player.move()
-        re_draw_window(win, player, player2)
+        p.move()
+        re_draw_window(win, p, p2)
 
 
 main()

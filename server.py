@@ -1,7 +1,8 @@
 import socket
 from settings import ip, port
 from _thread import *
-
+from player import Player
+import pickle
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -13,39 +14,29 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for connection... Server started")
 
-
-def read_position(string):
-    string = string.split(",")
-    return int(string[0]), int(string[1])
-
-
-def make_position(tup):
-    return str(tup[0]) + "," + str(tup[1])
-
-
-positions = [(0, 0), (100, 100)]
+players = [Player(0, 0, 50, 50, (255, 0, 0)), Player(100, 100, 50, 50, (0, 0, 255))]
 
 
 def threaded_client(conn, player):
-    conn.send(str.encode(make_position(positions[player])))
+    conn.send(pickle.dumps(players[player]))
     reply = ""
     while True:
         try:
-            data = read_position(conn.recv(2048).decode())
-            positions[player] = data
+            data = pickle.loads(conn.recv(2048))
+            players[player] = data
 
             if not data:
                 print("Disconnect from server")
                 break
             else:
                 if player == 1:
-                    reply = positions[0]
+                    reply = players[0]
                 else:
-                    reply = positions[1]
+                    reply = players[1]
                 print("Received data: {}".format(data))
                 print("Sending data: {}".format(reply))
 
-            conn.sendall(str.encode(make_position(reply)))
+            conn.sendall(pickle.dumps(reply))
         except conn.error as e:
             print("Error: ", e)
             break
