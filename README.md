@@ -5,6 +5,7 @@ Features
 
 * 2 player game
 * GUI
+* Use of secure, shared server to facilitate game play
 
 Future Improvements:
 
