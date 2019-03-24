@@ -4,7 +4,7 @@ Online Multiplayer Rock Paper Scissors game connected to a Linx server. Built us
 
 Features
 
-* Scalable game - allows for multiple clients
+* Scalable game - allows for multiple client games running simultaneously
 * GUI
 * Use of secure, shared server to facilitate game play
 
