@@ -15,6 +15,13 @@ class Game:
         """
         return self.moves[p]
 
+    def play(self, player, move):
+        self.moves[player] = move
+        if player == 0:
+            self.p1_went = True
+        else:
+            self.p2_went = True
+
     def player(self, player, move):
         self.moves[player] = move
         if player == 0:
@@ -48,6 +55,6 @@ class Game:
 
         return winner
 
-    def reset_went(self):
+    def reset(self):
         self.p1_went = False
         self.p2_went = False

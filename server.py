@@ -2,6 +2,7 @@ import socket
 from settings import ip, port
 from game import Game
 from _thread import *
+import pickle
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -18,8 +19,40 @@ games = {}
 id_count = 0
 
 
-def threaded_client(conn, player, gameId):
-    pass
+def threaded_client(conn, player, game_id):
+    global id_count
+    conn.send(str.encode(str(player)))
+
+    reply = ""
+    while True:
+        try:
+            data = conn.receive(4096).decode()
+            if game_id in games:
+                game = games[game_id]
+                if not data:
+                    break
+                else:
+                    if data == 'reset':
+                        game.reset()
+                    elif data != 'get':
+                        game.play(player, data)
+
+                    reply = game
+                    conn.sendall(pickle.dumps(reply))
+            else:
+                break
+        except:
+            break
+
+    print('Lost connection with server')
+    try:
+        del games[game_id]
+        print('Closing game', game_id)
+    except:
+        pass
+    id_count -= 1
+    conn.close()
+
 
 
 while True:
@@ -37,4 +70,4 @@ while True:
         games[game_id].ready = True
         current_player = 1
 
-    start_new_thread(threaded_client, (conn))
+    start_new_thread(threaded_client, (conn, current_player, game_id))
