@@ -8,21 +8,14 @@ class Game:
         self.wins = [0, 0]
         self.draws = 0
 
-    def get_player_move(self, p):
+    def get_player_move(self, player):
         """"
-        :param p [0, 1]
+        :param player [0, 1]
         :return Move
         """
-        return self.moves[p]
+        return self.moves[player]
 
     def play(self, player, move):
-        self.moves[player] = move
-        if player == 0:
-            self.p1_went = True
-        else:
-            self.p2_went = True
-
-    def player(self, player, move):
         self.moves[player] = move
         if player == 0:
             self.p1_went = True

@@ -3,8 +3,8 @@ from network import Network
 pygame.font.init()
 
 # set up
-WIDTH = 500
-HEIGHT = 500
+WIDTH = 700
+HEIGHT = 700
 
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Client")
@@ -16,7 +16,7 @@ class Button:
         self.x = x
         self.y = y
         self.colour = colour
-        self.width = 100
+        self.width = 150
         self.height = 100
 
     def draw(self, win):
@@ -41,9 +41,9 @@ def re_draw_window(win, game, player):
 
     if not(game.connected()):
         # other player is yet to connect
-        font = pygame.font.SysFont("comicsans", 72)
-        text = font.render("Waiting for second player to connect...", 1, (0, 0, 255), True)
-        win.blit(text, (WIDTH/2 - text.get_width(), HEIGHT/2 - text.get_height()/2))
+        font = pygame.font.SysFont("comicsans", 36)
+        text = font.render("Waiting for both players to connect...", 1, (0, 0, 255), True)
+        win.blit(text, (WIDTH/2 - text.get_width()/2, HEIGHT/2 - text.get_height()/2))
     else:
         font = pygame.font.SysFont("comicsans", 60)
         text = font.render("Your Move", 1, (0, 255, 255))
@@ -103,9 +103,10 @@ def main():
         clock.tick(60)
         try:
             game = network.send("get")
+            print('made it passed game')
         except:
             run = False
-            print("Could not retrieve game from server")
+            print("Could not retrieve game from server - game failed locally")
             break
 
         if game.both_went():
@@ -134,7 +135,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONUP:
                 position = pygame.mouse.get_pos()
                 for button in buttons:
                     if button.click(position) and game.connected():
