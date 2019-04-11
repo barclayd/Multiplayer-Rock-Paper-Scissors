@@ -36,11 +36,56 @@ class Button:
 
 
 # functions
-def re_draw_window(win, player, player2):
+def re_draw_window(win, game, player):
     win.fill((255, 255, 255))
-    player.draw(win)
-    player2.draw(win)
-    pygame.display.update()
+
+    if not(game.connected()):
+        # other player is yet to connect
+        font = pygame.font.SysFont("comicsans", 72)
+        text = font.render("Waiting for second player to connect...", 1, (0, 0, 255), True)
+        win.blit(text, (WIDTH/2 - text.get_width(), HEIGHT/2 - text.get_height()/2))
+    else:
+        font = pygame.font.SysFont("comicsans", 60)
+        text = font.render("Your Move", 1, (0, 255, 255))
+        win.blit(text, (80, 200))
+
+        text = font.render("Opponent's", 1, (0, 255, 255))
+        win.blit(text, (380, 200))
+
+        move1 = game.get_player_move(0)
+        move2 = game.get_player_move(1)
+
+        if game.both_went():
+            text1 = font.render(move1, 1, (0, 0, 0))
+            text2 = font.render(move2, 1, (0, 0, 0))
+        else:
+            # check if we need to hide opponents move
+            if game.p1_went and player == 0:
+                text1 = font.render(move1, 1, (0, 0, 0))
+            elif game.p1_went:
+                text1 = font.render("Locked in", 1, (0, 0, 0))
+            else:
+                text1 = font.render("Waiting...", 1, (0, 0, 0))
+
+            if game.p2_went and player == 1:
+                text2 = font.render(move2, 1, (0, 0, 0))
+            elif game.p2_went:
+                text2 = font.render("Locked in", 1, (0, 0, 0))
+            else:
+                text2 = font.render("Waiting...", 1, (0, 0, 0))
+
+            # render text on screen
+
+            if player == 1:
+                win.blit(text2, (100, 350))
+                win.blit(text1, (400, 350))
+            else:
+                win.blit(text1, (100, 350))
+                win.blit(text2, (400, 350))
+
+    for button in buttons:
+        button.draw(win)
+        pygame.display.update()
 
 
 buttons = [Button("Rock", 50, 500, (0, 0, 0)), Button("Scissors", 250, 500, (255, 0, 0)),
@@ -64,7 +109,7 @@ def main():
             break
 
         if game.both_went():
-            re_draw_window()
+            re_draw_window(win, game, player)
             pygame.time.delay(500)
             try:
                 game = network.send("reset")
