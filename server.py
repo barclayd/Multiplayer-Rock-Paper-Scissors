@@ -54,7 +54,6 @@ def threaded_client(conn, player, game_id):
     conn.close()
 
 
-
 while True:
     conn, addr = s.accept()
     print("Connection made to {}".format(addr))
