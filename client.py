@@ -65,13 +65,46 @@ def main():
 
         if game.both_went():
             re_draw_window()
-            pygame.time.delay(200)
+            pygame.time.delay(500)
             try:
                 game = network.send("reset")
             except:
                 run = False
                 print("Could not retrieve game from server")
                 break
+
+            font = pygame.font.SysFont("comicsans", 90)
+            if (game.winner() == 1 and player == 1) or (game.winner() == 0 and player == 0):
+                text = font.render("You Win!", 1, (255, 0, 0))
+            elif game.winner() == -1:
+                text = font.render("You Drew with your Opponent!", 1, (255, 0, 0))
+            else:
+                text = font.render("You Lose! Better luck next time!", 1, (255, 0, 0))
+
+            win.blit(text, (WIDTH/2 - text.get_width()/2, HEIGHT/2 - text.get_height()/2))
+            pygame.display.update()
+            pygame.time.delay(2000)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                position = pygame.mouse.get_pos()
+                for button in buttons:
+                    if button.click(position) and game.connected():
+                        if player == 0:
+                            if not game.p1_went:
+                                # check if player has not made a move
+                                # if not, send move to server
+                                network.send(button.text)
+                        else:
+                            if not game.p2_went:
+                                # check if player has not made a move
+                                # if not, send move to server
+                                network.send(button.text)
+
+        re_draw_window(win, game, player)
 
 
 main()
