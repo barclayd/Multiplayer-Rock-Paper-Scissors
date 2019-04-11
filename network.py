@@ -11,10 +11,10 @@ class Network:
         self.ip = ip
         self.port = port
         self.addr = (self.ip, self.port)
-        self.p = self.connect()
+        self.player = self.connect()
 
-    def get_p(self):
-        return self.p
+    def get_player(self):
+        return self.player
 
     def connect(self):
         try:
