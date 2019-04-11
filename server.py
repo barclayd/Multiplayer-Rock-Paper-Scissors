@@ -26,7 +26,7 @@ def threaded_client(conn, player, game_id):
     reply = ""
     while True:
         try:
-            data = conn.receive(4096).decode()
+            data = conn.recv(4096).decode()
             if game_id in games:
                 game = games[game_id]
                 if not data:
@@ -37,8 +37,7 @@ def threaded_client(conn, player, game_id):
                     elif data != 'get':
                         game.play(player, data)
 
-                    reply = game
-                    conn.sendall(pickle.dumps(reply))
+                    conn.sendall(pickle.dumps(game))
             else:
                 break
         except:
