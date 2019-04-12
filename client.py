@@ -6,7 +6,7 @@ pygame.font.init()
 WIDTH = 700
 HEIGHT = 700
 
-win = pygame.display.set_mode((WIDTH, HEIGHT))
+window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Client")
 
 
@@ -37,12 +37,12 @@ class Button:
 
 # functions
 def re_draw_window(win, game, player):
-    win.fill((255, 255, 255))
+    win.fill((0, 13, 26))
 
     if not(game.connected()):
         # other player is yet to connect
         font = pygame.font.SysFont("comicsans", 36)
-        text = font.render("Waiting for both players to connect...", 1, (0, 0, 255), True)
+        text = font.render("Waiting for both players to connect...", 1, (0, 77, 153), True)
         win.blit(text, (WIDTH/2 - text.get_width()/2, HEIGHT/2 - text.get_height()/2))
     else:
         font = pygame.font.SysFont("comicsans", 60)
@@ -56,61 +56,61 @@ def re_draw_window(win, game, player):
         move2 = game.get_player_move(1)
 
         if game.both_went():
-            text1 = font.render(move1, 1, (0, 0, 0))
-            text2 = font.render(move2, 1, (0, 0, 0))
+            text1 = font.render(move1, 1, (203, 229, 255))
+            text2 = font.render(move2, 1, (203, 229, 255))
         else:
             # check if we need to hide opponents move
             if game.p1_went and player == 0:
-                text1 = font.render(move1, 1, (0, 0, 0))
+                text1 = font.render(move1, 1, (0, 102, 102))
             elif game.p1_went:
-                text1 = font.render("Locked in", 1, (0, 0, 0))
+                text1 = font.render("Locked in", 1, (0, 102, 102))
             else:
-                text1 = font.render("Waiting...", 1, (0, 0, 0))
+                text1 = font.render("Waiting...", 1, (0, 102, 102))
 
             if game.p2_went and player == 1:
                 text2 = font.render(move2, 1, (0, 0, 0))
             elif game.p2_went:
-                text2 = font.render("Locked in", 1, (0, 0, 0))
+                text2 = font.render("Locked in", 1, (0, 102, 102))
             else:
-                text2 = font.render("Waiting...", 1, (0, 0, 0))
+                text2 = font.render("Waiting...", 1, (0, 102, 102))
 
             # render text on screen
 
-            if player == 1:
-                win.blit(text2, (100, 350))
-                win.blit(text1, (400, 350))
-            else:
-                win.blit(text1, (100, 350))
-                win.blit(text2, (400, 350))
+        if player == 1:
+            win.blit(text2, (100, 350))
+            win.blit(text1, (400, 350))
+        else:
+            win.blit(text1, (100, 350))
+            win.blit(text2, (400, 350))
 
-    for button in buttons:
-        button.draw(win)
-        pygame.display.update()
+        for button in buttons:
+            button.draw(win)
+
+    pygame.display.update()
 
 
-buttons = [Button("Rock", 50, 500, (0, 0, 0)), Button("Scissors", 250, 500, (255, 0, 0)),
-           Button("Paper", 450, 500, (0, 255, 0))]
+buttons = [Button("Rock", 50, 500, (51, 102, 0)), Button("Scissors", 250, 500, (0, 51, 102)),
+           Button("Paper", 450, 500, (102, 0, 51))]
 
 
 def main():
     run = True
+    clock = pygame.time.Clock()
     network = Network()
     player = int(network.get_player())
-    clock = pygame.time.Clock()
     print("You are player number: {}".format(player))
 
     while run:
         clock.tick(60)
         try:
             game = network.send("get")
-            print('made it passed game')
         except:
             run = False
             print("Could not retrieve game from server - game failed locally")
             break
 
         if game.both_went():
-            re_draw_window(win, game, player)
+            re_draw_window(window, game, player)
             pygame.time.delay(500)
             try:
                 game = network.send("reset")
@@ -121,13 +121,13 @@ def main():
 
             font = pygame.font.SysFont("comicsans", 90)
             if (game.winner() == 1 and player == 1) or (game.winner() == 0 and player == 0):
-                text = font.render("You Win!", 1, (255, 0, 0))
+                text = font.render("You Win!", 1, (207, 181, 59))
             elif game.winner() == -1:
-                text = font.render("You Drew with your Opponent!", 1, (255, 0, 0))
+                text = font.render("Draw!", 1, (211, 211, 211))
             else:
-                text = font.render("You Lose! Better luck next time!", 1, (255, 0, 0))
+                text = font.render("You Lose!", 1, (194, 26, 26))
 
-            win.blit(text, (WIDTH/2 - text.get_width()/2, HEIGHT/2 - text.get_height()/2))
+            window.blit(text, (WIDTH / 2 - text.get_width() / 2, HEIGHT / 2 - text.get_height() / 2))
             pygame.display.update()
             pygame.time.delay(2000)
 
@@ -150,7 +150,29 @@ def main():
                                 # if not, send move to server
                                 network.send(button.text)
 
-        re_draw_window(win, game, player)
+        re_draw_window(window, game, player)
 
 
-main()
+def menu_screen():
+    run = True
+    clock = pygame.time.Clock()
+
+    while run:
+        clock.tick(60)
+        window.fill((144, 199, 255))
+        font = pygame.font.SysFont("comicsans", 60)
+        text = font.render("Click to Play!", 1, (0, 5, 10))
+        window.blit(text, (WIDTH / 2 - text.get_width() / 2, HEIGHT / 2 - text.get_height() / 2))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                run = False
+            if event.type == pygame.MOUSEBUTTONUP:
+                run = False
+
+    main()
+
+
+while True:
+    menu_screen()
