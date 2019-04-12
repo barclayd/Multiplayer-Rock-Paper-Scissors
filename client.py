@@ -21,7 +21,7 @@ class Button:
 
     def draw(self, win):
         pygame.draw.rect(win, self.colour, (self.x, self.y, self.width, self.height))
-        font = pygame.font.SysFont("comicsans", 36)
+        font = pygame.font.SysFont("verdana", 36)
         text = font.render(self.text, 1, (255, 255, 255))
         win.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2), self.y + round(self.height/2)
                         - round(text.get_height()/2)))
@@ -41,11 +41,11 @@ def re_draw_window(win, game, player):
 
     if not(game.connected()):
         # other player is yet to connect
-        font = pygame.font.SysFont("comicsans", 36)
+        font = pygame.font.SysFont("verdana", 36)
         text = font.render("Waiting for both players to connect...", 1, (0, 77, 153), True)
         win.blit(text, (WIDTH/2 - text.get_width()/2, HEIGHT/2 - text.get_height()/2))
     else:
-        font = pygame.font.SysFont("comicsans", 60)
+        font = pygame.font.SysFont("verdana", 60)
         text = font.render("Your Move", 1, (0, 255, 255))
         win.blit(text, (80, 200))
 
@@ -68,7 +68,7 @@ def re_draw_window(win, game, player):
                 text1 = font.render("Waiting...", 1, (0, 102, 102))
 
             if game.p2_went and player == 1:
-                text2 = font.render(move2, 1, (0, 0, 0))
+                text2 = font.render(move2, 1, (0, 102, 102))
             elif game.p2_went:
                 text2 = font.render("Locked in", 1, (0, 102, 102))
             else:
@@ -111,7 +111,6 @@ def main():
 
         if game.both_went():
             re_draw_window(window, game, player)
-            pygame.time.delay(500)
             try:
                 game = network.send("reset")
             except:
@@ -119,7 +118,7 @@ def main():
                 print("Could not retrieve game from server")
                 break
 
-            font = pygame.font.SysFont("comicsans", 90)
+            font = pygame.font.SysFont("verdana", 90)
             if (game.winner() == 1 and player == 1) or (game.winner() == 0 and player == 0):
                 text = font.render("You Win!", 1, (207, 181, 59))
             elif game.winner() == -1:
@@ -129,7 +128,6 @@ def main():
 
             window.blit(text, (WIDTH / 2 - text.get_width() / 2, HEIGHT / 2 - text.get_height() / 2))
             pygame.display.update()
-            pygame.time.delay(2000)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -160,7 +158,7 @@ def menu_screen():
     while run:
         clock.tick(60)
         window.fill((144, 199, 255))
-        font = pygame.font.SysFont("comicsans", 60)
+        font = pygame.font.SysFont("verdana", 60)
         text = font.render("Click to Play!", 1, (0, 5, 10))
         window.blit(text, (WIDTH / 2 - text.get_width() / 2, HEIGHT / 2 - text.get_height() / 2))
         pygame.display.update()
