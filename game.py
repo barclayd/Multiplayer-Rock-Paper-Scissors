@@ -32,6 +32,7 @@ class Game:
         p1 = self.moves[0].upper()[0]
         p2 = self.moves[1].upper()[0]
 
+        # calculate which player has won the game based on selected move
         winner = -1
         if p1 == "R" and p2 == "S":
             winner = 0
